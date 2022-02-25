@@ -2,7 +2,7 @@ use super::method::{Method, MethodError};
 use super::{QueryString, QueryStringValue};
 use std::convert::TryFrom;
 use std::error::Error;
-use std::fmt::{Display, Debug, Formatter, Result as FmtResult};
+use std::fmt::{Debug, Display, Formatter, Result as FmtResult};
 use std::str;
 use std::str::Utf8Error;
 
@@ -34,14 +34,14 @@ impl<'buf> TryFrom<&'buf [u8]> for Request<'buf> {
         let mut query_string = None;
 
         if let Some(i) = path.find('?') {
-            query_string = Some(QueryString::from(&path[i+1..]));
+            query_string = Some(QueryString::from(&path[i + 1..]));
             path = &path[..i];
         }
 
         Ok(Self {
             path,
             query_string,
-            method
+            method,
         })
     }
 }
@@ -50,7 +50,7 @@ fn get_next_word(request: &str) -> Option<(&str, &str)> {
     let mut iter = request.chars();
     for (i, c) in request.chars().enumerate() {
         if c == ' ' || c == '\r' {
-            return Some((&request[..i], &request[i+1..]));  // only use this pattern this one time
+            return Some((&request[..i], &request[i + 1..])); // only use this pattern this one time
         }
     }
     None
@@ -60,7 +60,7 @@ pub enum ParseError {
     InvalidRequest,
     InvalidEncoding,
     InvalidProtocol,
-    InvalidMethod
+    InvalidMethod,
 }
 
 impl ParseError {
