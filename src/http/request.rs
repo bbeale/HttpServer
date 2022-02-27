@@ -1,5 +1,5 @@
 use super::method::{Method, MethodError};
-use super::{QueryString, QueryStringValue};
+use super::QueryString;
 use std::convert::TryFrom;
 use std::error::Error;
 use std::fmt::{Debug, Display, Formatter, Result as FmtResult};
@@ -27,10 +27,6 @@ impl<'buf> Request<'buf> {
         self.query_string.as_ref()
     }
 }
-
-// impl Request {
-//     fn from_byte_array(buf: &[u8]) -> Result<Self, String> {}
-// }
 
 impl<'buf> TryFrom<&'buf [u8]> for Request<'buf> {
     type Error = ParseError;
@@ -62,7 +58,6 @@ impl<'buf> TryFrom<&'buf [u8]> for Request<'buf> {
 }
 
 fn get_next_word(request: &str) -> Option<(&str, &str)> {
-    let mut iter = request.chars();
     for (i, c) in request.chars().enumerate() {
         if c == ' ' || c == '\r' {
             return Some((&request[..i], &request[i + 1..])); // only use this pattern this one time

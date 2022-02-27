@@ -1,9 +1,9 @@
-use super::http::{StatusCode, Method, Request, Response};
+use super::http::{Method, Request, Response, StatusCode};
 use super::server::Handler;
 use std::fs;
 
 pub struct RequesteHandler {
-    public_path: String
+    public_path: String,
 }
 
 impl RequesteHandler {
@@ -31,10 +31,13 @@ impl RequesteHandler {
                 if path.starts_with(&self.public_path) {
                     fs::read_to_string(path).ok()
                 } else {
-                    println!("[ALERT] Attempted Directory Traversal attack detected: {}", file_path);
+                    println!(
+                        "[ALERT] Attempted Directory Traversal attack detected: {}",
+                        file_path
+                    );
                     None
                 }
-            },
+            }
             Err(_) => None,
         }
     }
@@ -42,19 +45,15 @@ impl RequesteHandler {
 
 impl Handler for RequesteHandler {
     fn handle_request(&mut self, request: &Request) -> Response {
-        //Response::new(StatusCode::Ok, Some("<h1>TEST</h1>".to_string()))
-
         match request.method() {
             Method::GET => match request.path() {
                 "/" => Response::new(StatusCode::Ok, self.read_file("index.html")),
                 "/hello" => Response::new(StatusCode::Ok, self.read_file("hello.html")),
                 path => match self.read_file(path) {
-
-                     // NONONO! Directory traversal introduced here
                     Some(contents) => Response::new(StatusCode::Ok, Some(contents)),
                     None => Response::new(StatusCode::NotFound, None),
-                }
-            }
+                },
+            },
             _ => Response::new(StatusCode::NotFound, None),
         }
     }

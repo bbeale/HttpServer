@@ -1,12 +1,12 @@
 #![allow(dead_code)]
 
+use handler::RequesteHandler;
 use server::Server;
 use std::env;
-use handler::RequesteHandler;
 
+mod handler;
 mod http;
 mod server;
-mod handler;
 
 fn main() {
     let default_path = format!("{}/public", env!("CARGO_MANIFEST_DIR"));
